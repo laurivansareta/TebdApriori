@@ -10,8 +10,8 @@ import org.apache.hadoop.mapreduce.*;
 
 public class MapDois extends Mapper<LongWritable, Text, Text, Text> {
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {       
-    	String linha = "", chave ="", chaveArq = "", valoresSaida="", chavesSaida="";
-		String[] valores = null, valoresArq = null, chaveValor = null, chaveValorArq = null;
+    	String chave ="", chaveArq = "", valoresSaida="", chavesSaida="";
+		String[] valores = null, chaveValor = null, chaveValorArq = null;
 		
     	FileReader arquivo = new FileReader(new File("/home/kranz12/Documents/Projetos/trabalho_dois/out/part-r-00000"));
     	BufferedReader lerArq = new BufferedReader(arquivo);
@@ -27,9 +27,9 @@ public class MapDois extends Mapper<LongWritable, Text, Text, Text> {
 //    		valoresArq = chaveValorArq[1].split(","); //ver se precisa apagar
     		if (!chave.equals(chaveArq)){
     			if (chave.compareTo(chaveArq) < 0 ){
-    				chavesSaida = chave + chaveArq;
+    				chavesSaida = chave + "/" + chaveArq + "/";
     			}else if (chave.compareTo(chaveArq) > 0 ){
-    				chavesSaida = chaveArq + chave;
+    				chavesSaida = chaveArq + "/" + chave + "/";
     			}
     			for (int i=0; i < valores.length; i++){
 //    				System.out.println("valores: " + valores[i] + " chaveValorArq[1]: " + chaveValorArq[1]);
@@ -43,7 +43,7 @@ public class MapDois extends Mapper<LongWritable, Text, Text, Text> {
     		}
 //    		System.out.println(chaveValorArq[1]);
     		if (valoresSaida.length()>0){
-	    		System.out.println("chave: " + chavesSaida + " valor: " + valoresSaida);
+//	    		System.out.println("chave: " + chavesSaida + " valor: " + valoresSaida);
 	    		context.write(new Text(chavesSaida), new Text(valoresSaida));
     		}
 		}

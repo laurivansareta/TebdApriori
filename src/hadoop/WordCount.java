@@ -42,7 +42,7 @@ public class WordCount {
         job.setOutputFormatClass(TextOutputFormat.class);
        
         //FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileInputFormat.addInputPath(job, new Path("/home/kranz12/Documents/Projetos/trabalho_dois/T40I10D100K.dat"));
+        FileInputFormat.addInputPath(job, new Path("/home/kranz12/Documents/Projetos/trabalho_dois/numeros.dat"));
         FileOutputFormat.setOutputPath(job, new Path("/home/kranz12/Documents/Projetos/trabalho_dois/out"));
  
         job.waitForCompletion(true);

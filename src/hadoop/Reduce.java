@@ -6,8 +6,8 @@ import org.apache.hadoop.io.Text;
 
 
 public class Reduce extends Reducer<Text, Text, Text, Text> {
-	double totalTrans = 5; //colocar constante é o total de transações
-	double supMin = 0.5; 
+	double totalTrans = 697; //colocar constante é o total de transações
+	double supMin = 0.01; 
     public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {    	
     	String outLinhas = "";
     	double count = 0; 
