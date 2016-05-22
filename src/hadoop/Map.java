@@ -14,8 +14,7 @@ public class Map extends Mapper<LongWritable, Text, Text, Text> {
         String[] linhaSplit = linha.split(" ");
         indiceLinha++;
         for(int i=0; i < linhaSplit.length; i++){        
-        	context.write(new Text(linhaSplit[i]), new Text(Integer.toString(indiceLinha)));        
+        	context.write(new Text(linhaSplit[i]+"/"), new Text(Integer.toString(indiceLinha)));        
         }        
-        //System.out.println(Integer.toString(indiceLinha)); //APAGAR
     }
 }

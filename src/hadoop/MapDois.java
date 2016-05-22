@@ -3,49 +3,59 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-
+import java.util.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.*;
 
 
 public class MapDois extends Mapper<LongWritable, Text, Text, Text> {
+	
+	public String ordenaChaves(String [] chaves){
+		String chaveRetorno = "";
+		Arrays.sort(chaves);
+		
+		for(int i = 0; i < chaves.length; i++)
+			chaveRetorno += chaves[i] + "/";
+		
+		return chaveRetorno;
+	}
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {       
     	String chave ="", chaveArq = "", valoresSaida="", chavesSaida="";
-		String[] valores = null, chaveValor = null, chaveValorArq = null;
-		
-    	FileReader arquivo = new FileReader(new File("/home/kranz12/Documents/Projetos/trabalho_dois/out/part-r-00000"));
+		String[] valores = null, chaveValorArq = null, chavesDoArquivo = null;
+		String[] chaveValor = value.toString().split("	"), tamanhoKey = key.toString().split("/");
+			
+    	FileReader arquivo = new FileReader(new File("/home/kranz12/Documents/Projetos/trabalho_dois/out/job"+(tamanhoKey.length)+"/part-r-00000"));
     	BufferedReader lerArq = new BufferedReader(arquivo);
     	
     	//posições no array 0-Chave 1-Valor
-    	chaveValor = value.toString().split("	");
     	chave = chaveValor[0];
-    	valores = chaveValor[1].split(",");
+    	valores = chaveValor[1].split(","); 
     	
-    	for (String linhaArq = lerArq.readLine(); linhaArq != null; linhaArq = lerArq.readLine(), valoresSaida="") {
-    		chaveValorArq = linhaArq.split("	");
-    		chaveArq = chaveValorArq[0];
-//    		valoresArq = chaveValorArq[1].split(","); //ver se precisa apagar
-    		if (!chave.equals(chaveArq)){
-    			if (chave.compareTo(chaveArq) < 0 ){
-    				chavesSaida = chave + "/" + chaveArq + "/";
-    			}else if (chave.compareTo(chaveArq) > 0 ){
-    				chavesSaida = chaveArq + "/" + chave + "/";
-    			}
-    			for (int i=0; i < valores.length; i++){
-//    				System.out.println("valores: " + valores[i] + " chaveValorArq[1]: " + chaveValorArq[1]);
-					if (chaveValorArq[1].contains(valores[i])){
-						valoresSaida += valores[i];
-						if (i < valores.length){
-							valoresSaida += ",";
-						}							
-					}
+    	for (String linhaArq = lerArq.readLine(); linhaArq != null; linhaArq = lerArq.readLine(),chavesSaida="",valoresSaida="") {
+    		chaveValorArq = linhaArq.split("	"); //linha completa do arquivo
+    		chaveArq = chaveValorArq[0]; // chave do arquivo
+    		if (!chave.equals(chaveArq)){ // verificando se a chave é igual a chave do arquivo
+    			chavesDoArquivo = chaveArq.split("/"); // vetor de chaves da linha do arquivo
+    			for(int cont = 0;cont < chavesDoArquivo.length; cont++){
+    				chavesSaida = chave;
+    				if (!chave.contains(chavesDoArquivo[cont])){
+						chavesSaida += chavesDoArquivo[cont] + "/";		
+						chavesSaida = ordenaChaves(chavesSaida.split("/")); //FUNÇÃO DE ORDENAÇÃO DA CHAVE
+		    			for (int i=0; i < valores.length; i++){
+							if (chaveValorArq[1].contains(valores[i])){
+								valoresSaida += valores[i];
+								if (i < valores.length){
+									valoresSaida += ",";
+								}							
+							}
+		    			}
+		        		if (valoresSaida.length()>0){
+		    	    		context.write(new Text(chavesSaida), new Text(valoresSaida));
+		        		}
+    				}
     			}
     		}
-//    		System.out.println(chaveValorArq[1]);
-    		if (valoresSaida.length()>0){
-//	    		System.out.println("chave: " + chavesSaida + " valor: " + valoresSaida);
-	    		context.write(new Text(chavesSaida), new Text(valoresSaida));
-    		}
+
 		}
     	
     	lerArq.close();

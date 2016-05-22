@@ -6,11 +6,11 @@ import org.apache.hadoop.io.Text;
 
 
 public class Reduce extends Reducer<Text, Text, Text, Text> {
-	double totalTrans = 697; //colocar constante é o total de transações
-	double supMin = 0.01; 
-    public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {    	
+    public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {  
+    	int totalTrans = Integer.parseInt(context.getConfiguration().get("linhasInicial"));
+    	double count = 0, supMin = Float.parseFloat(context.getConfiguration().get("supMin"));
     	String outLinhas = "";
-    	double count = 0; 
+    	
     	for (Text val : values) {
     		outLinhas = outLinhas.concat(val.toString()+",");
     		count++;
